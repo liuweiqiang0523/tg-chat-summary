@@ -10,3 +10,4 @@ apscheduler>=3.10
 aiohttp>=3.9
 pydantic>=2.0
 rich>=13.0
+jieba>=0.42

@@ -81,16 +81,22 @@ tg-chat-summary/
 │   ├── bot.py          # Bot 主程序
 │   ├── config.py       # 配置管理
 │   ├── summarizer.py   # 消息总结核心
-│   ├── stats.py        # 统计分析
-│   ├── scheduler.py    # 定时任务
+│   ├── topics.py       # 话题聚类
 │   ├── image.py        # 图片生成
+│   ├── scheduler.py    # 定时任务
+│   ├── database.py     # 数据库管理
 │   └── utils.py        # 工具函数
 ├── tests/
-│   └── test_summarizer.py
+│   ├── test_summarizer.py
+│   ├── test_config.py
+│   ├── test_image.py
+│   └── test_scheduler.py
 ├── docs/
 │   └── API.md
 ├── .env.example
 ├── requirements.txt
+├── requirements-dev.txt
+├── pytest.ini
 ├── Dockerfile
 └── README.md
 ```
@@ -155,6 +161,33 @@ IMAGE_THEME=dark  # dark / light
 ```bash
 docker build -t tg-chat-summary .
 docker run -d --name tg-summarizer --env-file .env tg-chat-summary
+```
+
+## 🧪 开发
+
+### 安装开发依赖
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### 运行测试
+
+```bash
+pytest
+```
+
+### 代码风格
+
+```bash
+# 格式化
+black src/ tests/
+
+# 检查
+flake8 src/ tests/
+
+# 类型检查
+mypy src/
 ```
 
 ## 🤝 贡献
