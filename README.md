@@ -201,3 +201,7 @@ MIT License
 ## ⭐ Star History
 
 如果觉得有用，请给个 Star ⭐
+
+## 📄 License
+
+[MIT License](LICENSE)
