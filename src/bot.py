@@ -40,6 +40,31 @@ topic_extractor = TopicExtractor()
 image_gen = ImageGenerator() if config.ENABLE_IMAGE else None
 
 
+def check_permission(user_id: int) -> bool:
+    """检查用户是否有权限使用命令
+    
+    权限规则：
+    1. 主人（OWNER_ID）始终有权限
+    2. 如果 ADMIN_ONLY=true，只有主人能用
+    3. ALLOWED_USERS 中的用户也能用
+    """
+    # 主人始终有权限
+    if config.OWNER_ID and str(user_id) == config.OWNER_ID:
+        return True
+    
+    # 如果 ADMIN_ONLY，只有主人能用
+    if config.ADMIN_ONLY:
+        return False
+    
+    # 检查额外允许的用户
+    if config.ALLOWED_USERS:
+        allowed = [uid.strip() for uid in config.ALLOWED_USERS.split(",")]
+        if str(user_id) in allowed:
+            return True
+    
+    return False
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /start 命令"""
     await update.message.reply_text(
@@ -52,7 +77,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "📝 <b>快速开始</b>\n"
         "• /sum - 总结最近消息\n"
         "• /help - 查看所有命令\n\n"
-        "将我添加到群组即可使用！",
+        "⚠️ 注意：默认只有主人才能使用命令\n"
+        "如需授权其他用户，请设置 ALLOWED_USERS",
         parse_mode="html"
     )
 
@@ -232,6 +258,11 @@ async def format_summary(result, language: str = "zh") -> str:
 
 async def sum_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /sum 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -301,6 +332,11 @@ async def sum_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /daily 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -349,6 +385,11 @@ async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def weekly_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /weekly 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -397,6 +438,11 @@ async def weekly_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def topics_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /topics 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -441,6 +487,11 @@ async def topics_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def keywords_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /keywords 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -484,6 +535,11 @@ async def keywords_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def sentiment_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /sentiment 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -522,6 +578,11 @@ async def sentiment_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /stats 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -583,6 +644,11 @@ async def stats_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /活跃榜 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -619,6 +685,11 @@ async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 async def setdaily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /setdaily 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -654,6 +725,11 @@ async def setdaily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def setweekly_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /setweekly 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -697,6 +773,11 @@ async def setweekly_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def unset_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /unset 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if update.effective_chat.type == "private":
         await update.message.reply_text("❌ 请在群组中使用此命令")
         return
@@ -716,6 +797,11 @@ async def unset_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def lang_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """处理 /lang 命令"""
+    # 权限检查
+    if not check_permission(update.effective_user.id):
+        await update.message.reply_text("❌ 您没有权限使用此命令，只有主人能用哦~")
+        return
+    
     if not context.args:
         await update.message.reply_text(
             f"当前语言: {config.DEFAULT_LANGUAGE}\n"
@@ -807,7 +893,7 @@ def main():
     application.add_handler(CommandHandler("lang", lang_command))
 
     # 启动 Bot
-    logger.info("Bot 启动中...")
+    logger.info(f"Bot 启动中... 权限模式: {'仅主人' if config.ADMIN_ONLY else '开放'}")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

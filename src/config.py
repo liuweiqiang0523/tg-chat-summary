@@ -34,6 +34,11 @@ class Config:
     IMAGE_WIDTH: int = int(os.getenv("IMAGE_WIDTH", "800"))
     IMAGE_THEME: str = os.getenv("IMAGE_THEME", "dark")  # dark / light
 
+    # 权限配置
+    OWNER_ID: str = os.getenv("OWNER_ID", "")  # 主人 Telegram User ID
+    ADMIN_ONLY: bool = os.getenv("ADMIN_ONLY", "true").lower() == "true"  # 默认只有主人能用
+    ALLOWED_USERS: str = os.getenv("ALLOWED_USERS", "")  # 额外允许的用户 ID，逗号分隔
+
     # 定时任务
     ENABLE_SCHEDULER: bool = os.getenv("ENABLE_SCHEDULER", "true").lower() == "true"
     TIMEZONE: str = os.getenv("TIMEZONE", "Asia/Shanghai")
